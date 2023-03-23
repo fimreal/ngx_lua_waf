@@ -28,7 +28,7 @@ function _M.IsWhiteIP(clientIP)
             local s, e = string.find(whiteIP, '-', 0, true)
             -- 匹配单 ip 
             if s == nil and clientIP == whiteIP then
-                wafutils.logDebug(clientIP .. " is white ip, catch rule: " .. whiteIP)
+                wafutils.logWarn(clientIP .. " is white ip, catch rule: " .. whiteIP)
                 return true
             elseif s ~= nil then
                 -- FIXME: 缺少 ip 可靠性判断
@@ -37,7 +37,7 @@ function _M.IsWhiteIP(clientIP)
                 if clientIPDec < ipFrom or clientIPDec > ipTo then
                     return false
                 end
-                wafutils.logDebug(clientIP .. " is white ip, catch rule: " .. whiteIP)
+                wafutils.logWarn(clientIP .. " is white ip, catch rule: " .. whiteIP)
                 return true
             end
         end
@@ -55,7 +55,7 @@ function _M.IsBlackIP(clientIP)
             local s, e = string.find(blackIP, '-', 0, true)
             -- 匹配单 ip 
             if s == nil and clientIP == blackIP then
-                wafutils.logDebug(clientIP .. " is black ip, catch rule: " .. blackIP)
+                wafutils.logWarn(clientIP .. " is black ip, catch rule: " .. blackIP)
                 return true
             elseif s ~= nil then
                 -- FIXME: 缺少 ip 可靠性判断
@@ -64,7 +64,7 @@ function _M.IsBlackIP(clientIP)
                 if clientIPDec < ipFrom or clientIPDec > ipTo then
                     return false
                 end
-                wafutils.logDebug(clientIP .. " is black ip, catch rule: " .. blackIP)
+                wafutils.logWarn(clientIP .. " is black ip, catch rule: " .. blackIP)
                 return true
             end
         end
@@ -84,7 +84,7 @@ function _M.IsWhiteUrl(uri)
     if wafutils.IsNotEmpty(WafRule.UrlWhiteRules) then
         for _, rule in pairs(WafRule.UrlWhiteRules) do
             if reMatch(uri, rule, "isjo") then
-                wafutils.logDebug(uri .. " is white uri, catch rule: " .. rule)
+                wafutils.logWarn(uri .. " is white uri, catch rule: " .. rule)
                 return true
             end
         end
@@ -96,7 +96,7 @@ function _M.IsBlackUrl(uri)
     if wafutils.IsNotEmpty(WafRule.UrlBlackRules) then
         for _, rule in pairs(WafRule.UrlBlackRules) do
             if reMatch(uri, rule, "isjo") then
-                wafutils.logDebug(uri .. " is black uri, catch rule: " .. rule)
+                wafutils.logWarn(uri .. " is black uri, catch rule: " .. rule)
                 return true
             end
         end
@@ -126,7 +126,7 @@ function _M.QueryStringFilter(args)
                 end
 
                 if reMatch(ngx.unescape_uri(data),rule,'isjo') then
-                    wafutils.logDebug("find ".. data .. " in rule: " .. rule)
+                    wafutils.logWarn("find ".. data .. " in rule: " .. rule)
                     return true
                 end
             end
@@ -141,7 +141,7 @@ function _M.IsWhiteHost(host)
     if wafutils.IsNotEmpty(WafRule.HostWhiteRules) then
         for _, rule in pairs(WafRule.HostWhiteRules) do
             if reMatch(host, rule, "isjo") then
-                wafutils.logDebug(host .. " is white host, catch rule: " .. rule)
+                wafutils.logWarn(host .. " is white host, catch rule: " .. rule)
                 return true
             end
         end
@@ -153,7 +153,7 @@ function _M.IsBlackHost(host)
     if wafutils.IsNotEmpty(WafRule.HostBlackRules) then
         for _, rule in pairs(WafRule.HostBlackRules) do
             if reMatch(host, rule, "isjo") then
-                wafutils.logDebug(host .. " is black host, catch rule: " .. rule)
+                wafutils.logWarn(host .. " is black host, catch rule: " .. rule)
                 return true
             end
         end
@@ -167,7 +167,7 @@ function _M.IsWhiteUA(ua)
     if wafutils.IsNotEmpty(WafRule.UaWhiteRules) then
         for _, rule in pairs(WafRule.UaWhiteRules) do
             if reMatch(ua, rule, "isjo") then
-                wafutils.logDebug(ua .. " is white ua, catch rule: " .. rule)
+                wafutils.logWarn(ua .. " is white ua, catch rule: " .. rule)
                 return true
             end
         end
@@ -179,7 +179,7 @@ function _M.IsBlackUA(ua)
     if wafutils.IsNotEmpty(WafRule.UaBlackRules) then
         for _, rule in pairs(WafRule.UaBlackRules) do
             if reMatch(ua, rule, "isjo") then
-                wafutils.logDebug(ua .. " is black ua, catch rule: " .. rule)
+                wafutils.logWarn(ua .. " is black ua, catch rule: " .. rule)
                 return true
             end
         end
@@ -193,7 +193,7 @@ function _M.IsWhiteReferer(ref)
     if wafutils.IsNotEmpty(WafRule.RefWhiteRules) then
         for _, rule in pairs(WafRule.RefWhiteRules) do
             if reMatch(ref, rule, "isjo") then
-                wafutils.logDebug(ref .. " is white referer, catch rule: " .. rule)
+                wafutils.logWarn(ref .. " is white referer, catch rule: " .. rule)
                 return true
             end
         end
@@ -205,7 +205,7 @@ function _M.IsBlackReferer(ref)
     if wafutils.IsNotEmpty(WafRule.RefBlackRules) then
         for _, rule in pairs(WafRule.RefBlackRules) do
             if reMatch(ref, rule, "isjo") then
-                wafutils.logDebug(ref .. " is black referer, catch rule: " .. rule)
+                wafutils.logWarn(ref .. " is black referer, catch rule: " .. rule)
                 return true
             end
         end

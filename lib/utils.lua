@@ -68,6 +68,10 @@ function _M.logNotice(msg)
     ngx.log(ngx.NOTICE, msg)
 end
 
+function _M.logWarn(msg)
+    ngx.log(ngx.WARN, msg)
+end
+
 function _M.logAlert(msg)
     ngx.log(ngx.ALERT, msg)
 end
