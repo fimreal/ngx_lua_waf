@@ -8,7 +8,7 @@ local _M = {
 
 local wafutils = require "lib.utils"
 
-function _M.AddBlockIP()
+function _M.BlockIP()
     if not _M.BlockEvilIP then
         return
     end

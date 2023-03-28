@@ -8,11 +8,9 @@ local _M = {
 }
 
 -- 初始化加载规则到全局变量
--- function _M.Init(ruleDir)
---     init.SetWafRuleDir(ruleDir)
---     init.LoadRule()
--- end
 _M.Init = init.LoadRuleFromDir
+
+-- 是否启用触发过滤规则时，封锁该 ip 访问
 _M.EnableBlockIP = wafactions.EnableBlockIP
 
 -- 默认开启所有过滤，可以根据需要单独添加
