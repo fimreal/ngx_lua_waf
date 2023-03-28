@@ -72,6 +72,15 @@ function _M.IsBlackIP(clientIP)
     return false
 end
 
+function _M.IsBlockIp(clientIP)
+    local blockDict = ngx.shared.waf_block
+    local exist = blockDict:get(ip)
+    if exist then
+        return true
+    end
+    return false
+end
+
 -- 以下通过正则判断
 
 -- function IsBlackHeader()

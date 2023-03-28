@@ -15,11 +15,6 @@ function _M.BlockIP(exp)
     wafutils.logWarn("block IP: " .. ip)
     local blockDict = ngx.shared.waf_block
     blockDict:set(ip,1,exp)
-    -- local exist = blockDict:get(ip)
-    -- if exist then
-    --     return true
-    -- end
-    -- return false
 end
 
 

@@ -73,11 +73,12 @@ function _M.IpFilter()
     if rule.IsWhiteIP(clientIP) then
         return
     elseif rule.IsBlackIP(clientIP) then
-        wafutils.logAlert(clientIP .. " is black ip")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
             wafactions.BlockIP(_M.BlockDuration)
         end
+    elseif rule.IsBlockIp(clientIP) then
+        ngx.exit(ngx.HTTP_CLOSE)
     end
     return
 
@@ -102,7 +103,6 @@ function _M.HostFilter()
     if rule.IsWhiteHost(host) then
         return
     elseif rule.IsBlackHost(host) then
-        wafutils.logAlert(host .. " is black host")
         ngx.exit(ngx.HTTP_NOT_FOUND)
         if _M.BlockEvilIP then
             wafactions.BlockIP(_M.BlockDuration)
@@ -127,7 +127,6 @@ function _M.UrlFilter()
     if rule.IsWhiteUrl(uri) then
         return
     elseif rule.IsBlackUrl(uri) then
-        wafutils.logAlert(uri .. " is black uri")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
             wafactions.BlockIP(_M.BlockDuration)
@@ -143,7 +142,6 @@ function _M.ArgsFilter()
     if not args then
         return
     elseif rule.QueryStringFilter(args) then
-        wafutils.logAlert("request to " .. ngx.var.request_uri .. " in args filter rule")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
             wafactions.BlockIP(_M.BlockDuration)
@@ -168,7 +166,6 @@ function _M.RefererFilter()
     if rule.IsWhiteReferer(ref) then
         return
     elseif rule.IsBlackReferer(ref) then
-        wafutils.logAlert(ref .. " is black referer")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
             wafactions.BlockIP(_M.BlockDuration)
@@ -188,7 +185,6 @@ function _M.CookieFilter()
     if rule.IsWhiteCookie(ck) then
         return
     elseif rule.IsBlackCookie(ck) then
-        wafutils.logAlert(ck .. " is black cookie")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
             wafactions.BlockIP(_M.BlockDuration)
@@ -209,11 +205,10 @@ function _M.UserAgentFilter()
     if rule.IsWhiteUA(ua) then
         return
     elseif rule.IsBlackUA(ua) then
-        wafutils.logAlert(ua .. " is black ua")
-        ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
             wafactions.BlockIP(_M.BlockDuration)
         end
+        ngx.exit(ngx.HTTP_FORBIDDEN)
     end
     return
 end
