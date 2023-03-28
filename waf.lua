@@ -5,7 +5,8 @@ local wafactions = require "lib.actions"
 
 local _M = {
     _VERSION = "0.1.0",
-    BlockEvilIP = false
+    BlockEvilIP = false,
+    BlockDuration = nil
 }
 
 -- 初始化加载规则到全局变量
@@ -75,7 +76,7 @@ function _M.IpFilter()
         wafutils.logAlert(clientIP .. " is black ip")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
-            wafactions.BlockIP()
+            wafactions.BlockIP(_M.BlockDuration)
         end
     end
     return
@@ -104,7 +105,7 @@ function _M.HostFilter()
         wafutils.logAlert(host .. " is black host")
         ngx.exit(ngx.HTTP_NOT_FOUND)
         if _M.BlockEvilIP then
-            wafactions.BlockIP()
+            wafactions.BlockIP(_M.BlockDuration)
         end
     end
     return
@@ -129,7 +130,7 @@ function _M.UrlFilter()
         wafutils.logAlert(uri .. " is black uri")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
-            wafactions.BlockIP()
+            wafactions.BlockIP(_M.BlockDuration)
         end
     end
     return
@@ -145,7 +146,7 @@ function _M.ArgsFilter()
         wafutils.logAlert("request to " .. ngx.var.request_uri .. " in args filter rule")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
-            wafactions.BlockIP()
+            wafactions.BlockIP(_M.BlockDuration)
         end
     end
     return
@@ -170,7 +171,7 @@ function _M.RefererFilter()
         wafutils.logAlert(ref .. " is black referer")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
-            wafactions.BlockIP()
+            wafactions.BlockIP(_M.BlockDuration)
         end
     end
     return
@@ -190,7 +191,7 @@ function _M.CookieFilter()
         wafutils.logAlert(ck .. " is black cookie")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
-            wafactions.BlockIP()
+            wafactions.BlockIP(_M.BlockDuration)
         end
     end
     return
@@ -211,7 +212,7 @@ function _M.UserAgentFilter()
         wafutils.logAlert(ua .. " is black ua")
         ngx.exit(ngx.HTTP_FORBIDDEN)
         if _M.BlockEvilIP then
-            wafactions.BlockIP()
+            wafactions.BlockIP(_M.BlockDuration)
         end
     end
     return

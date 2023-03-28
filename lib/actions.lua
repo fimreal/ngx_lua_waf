@@ -6,7 +6,7 @@ local _M = {
 
 local wafutils = require "lib.utils"
 
-function _M.BlockIP()
+function _M.BlockIP(exp)
     local ip = wafutils.GetClientIP()
     if ip == "unknown" then
         return
@@ -14,7 +14,7 @@ function _M.BlockIP()
 
     wafutils.logWarn("block IP: " .. ip)
     local blockDict = ngx.shared.waf_block
-    blockDict:set(ip,1,nil)
+    blockDict:set(ip,1,exp)
     -- local exist = blockDict:get(ip)
     -- if exist then
     --     return true
