@@ -73,8 +73,7 @@ function _M.IsBlackIP(clientIP)
 end
 
 function _M.IsBlockIp(clientIP)
-    local blockDict = ngx.shared.waf_block
-    local exist = blockDict:get(ip)
+    local exist = ngx.shared.waf_block:get(clientIP)
     if exist then
         return true
     end

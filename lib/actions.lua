@@ -18,7 +18,7 @@ function _M.BlockIP()
         return
     end
 
-    wafutils.logWarn(ip .. "in block IPList now. Expire time: " .. _M.expireTime .. "s")
+    wafutils.logWarn(ip .. " in block IPList now. Expire time: " .. _M.expireTime .. "s")
     local ok, err, _ = ngx.shared.waf_block:set(ip, true, _M.expireTime)
     if not ok then
         wafutils.logErr(err)
