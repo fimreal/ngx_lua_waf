@@ -4,9 +4,7 @@ local wafutils = require "lib.utils"
 local wafactions = require "lib.actions"
 
 local _M = {
-    _VERSION = "0.1.0",
-    BlockEvilIP = false,
-    BlockDuration = 0
+    _VERSION = "0.1.0"
 }
 
 -- 初始化加载规则到全局变量
@@ -15,6 +13,7 @@ local _M = {
 --     init.LoadRule()
 -- end
 _M.Init = init.LoadRuleFromDir
+_M.EnableBlockIP = wafactions.EnableBlockIP
 
 -- 默认开启所有过滤，可以根据需要单独添加
 function _M.ON()
@@ -100,9 +99,7 @@ function _M.HostFilter()
     if rule.IsWhiteHost(host) then
         return
     elseif rule.IsBlackHost(host) then
-        if _M.BlockEvilIP then
-            wafactions.BlockIP(_M.BlockDuration)
-        end
+        wafactions.BlockIP()
         ngx.exit(ngx.HTTP_NOT_FOUND)
     end
     return
@@ -124,9 +121,7 @@ function _M.UrlFilter()
     if rule.IsWhiteUrl(uri) then
         return
     elseif rule.IsBlackUrl(uri) then
-        if _M.BlockEvilIP then
-            wafactions.BlockIP(_M.BlockDuration)
-        end
+        wafactions.BlockIP()
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
     return
@@ -139,9 +134,7 @@ function _M.ArgsFilter()
     if not args then
         return
     elseif rule.QueryStringFilter(args) then
-        if _M.BlockEvilIP then
-            wafactions.BlockIP(_M.BlockDuration)
-        end
+        wafactions.BlockIP()
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
     return
@@ -163,9 +156,7 @@ function _M.RefererFilter()
     if rule.IsWhiteReferer(ref) then
         return
     elseif rule.IsBlackReferer(ref) then
-        if _M.BlockEvilIP then
-            wafactions.BlockIP(_M.BlockDuration)
-        end
+        wafactions.BlockIP()
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
     return
@@ -182,9 +173,7 @@ function _M.CookieFilter()
     if rule.IsWhiteCookie(ck) then
         return
     elseif rule.IsBlackCookie(ck) then
-        if _M.BlockEvilIP then
-            wafactions.BlockIP(_M.BlockDuration)
-        end
+        wafactions.BlockIP()
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
     return
@@ -202,9 +191,7 @@ function _M.UserAgentFilter()
     if rule.IsWhiteUA(ua) then
         return
     elseif rule.IsBlackUA(ua) then
-        if _M.BlockEvilIP then
-            wafactions.BlockIP(_M.BlockDuration)
-        end
+        wafactions.BlockIP()
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
     return
