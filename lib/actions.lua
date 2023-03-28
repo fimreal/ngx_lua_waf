@@ -6,15 +6,17 @@ local _M = {
 
 local wafutils = require "lib.utils"
 
-function _M.BlockIP(exp)
+function _M.AddBlockIP(exp)
     local ip = wafutils.GetClientIP()
     if ip == "unknown" then
         return
     end
 
-    wafutils.logWarn("block IP: " .. ip)
-    local blockDict = ngx.shared.waf_block
-    blockDict:set(ip,1,exp)
+    wafutils.logWarn(ip .. "in block IPList now. Expire time: " .. exp .. "s")
+    local ok, err, _ = ngx.shared.waf_block:set(ip,true,exp)
+    if not ok then
+        wafutils.logErr(err)
+    end
 end
 
 
