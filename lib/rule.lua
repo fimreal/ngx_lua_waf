@@ -213,6 +213,30 @@ function _M.IsBlackReferer(ref)
     return false
 end
 
+-- cookie 判断
+function _M.IsWhiteCookie(cookie)
+    if wafutils.IsNotEmpty(WafRule.CookieWhiteRule) then
+        for _, rule in pairs(WafRule.CookieWhiteRule) do
+            if reMatch(ref, rule, "isjo") then
+                wafutils.logWarn(ref .. " is white cookie, catch rule: " .. rule)
+                return true
+            end
+        end
+    end
+    return false
+end
+function _M.IsBlackCookie(cookie)
+    if wafutils.IsNotEmpty(WafRule.CookieBlackRule) then
+        for _, rule in pairs(WafRule.CookieBlackRule) do
+            if reMatch(cookie, rule, "isjo") then
+                wafutils.logWarn(cookie .. " is black cookie, catch rule: " .. rule)
+                return true
+            end
+        end
+    end
+    return false
+end
+
 --
 --
 --

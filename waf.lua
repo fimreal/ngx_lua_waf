@@ -1,9 +1,11 @@
 local init = require "lib.init"
 local rule = require "lib.rule"
 local wafutils = require "lib.utils"
+local wafactions = require "lib.actions"
 
 local _M = {
-    _VERSION = "0.1.0"
+    _VERSION = "0.1.0",
+    BlockEvilIP = false
 }
 
 -- 初始化加载规则到全局变量
@@ -15,8 +17,8 @@ _M.Init = init.LoadRuleFromDir
 
 -- 默认开启所有过滤，可以根据需要单独添加
 function _M.ON()
-    -- 忽略内部请求, 减少一次 waf 过滤损耗 
-    -- 原因：如果配置在 access_by_lua 时可能会出现二次内部访问, 建议最好配置在 location 中
+    -- 忽略内部请求, 减少一次 waf 过滤损耗, 建议最好配置在 location 中
+    -- 原因：如果配置在 access_by_lua 时可能会出现二次内部访问
     -- ref. https://groups.google.com/g/openresty/c/9wjjtZMBGEk
     if rule.IsInternal() then
         wafutils.logDebug("skip internal req")
@@ -29,6 +31,7 @@ function _M.ON()
     _M.UrlFilter()
     _M.UserAgentFilter()
     _M.RefererFilter()
+    _M.CookieFilter()
 
     -- 速率限制
     -- _M.LimitRate()
@@ -71,6 +74,9 @@ function _M.IpFilter()
     elseif rule.IsBlackIP(clientIP) then
         wafutils.logAlert(clientIP .. " is black ip")
         ngx.exit(ngx.HTTP_FORBIDDEN)
+        if _M.BlockEvilIP then
+            wafactions.BlockIP()
+        end
     end
     return
 
@@ -87,7 +93,7 @@ end
 function _M.HostFilter()
     wafutils.logDebug("start host filter")
     local host = ngx.var.host or ""
-    if host == "" then
+    if host == "" or not host then
         wafutils.logAlert("not found host")
         return
     end
@@ -97,6 +103,9 @@ function _M.HostFilter()
     elseif rule.IsBlackHost(host) then
         wafutils.logAlert(host .. " is black host")
         ngx.exit(ngx.HTTP_NOT_FOUND)
+        if _M.BlockEvilIP then
+            wafactions.BlockIP()
+        end
     end
     return
 end
@@ -109,7 +118,7 @@ function _M.UrlFilter()
     -- $request_uri	请求的URI，带参数
     -- $uri	请求的URI，可能和最初的值有不同，比如经过重定向之类的
     local uri = ngx.var.request_uri or ""
-    if uri == "" then
+    if uri == "" or not uri then
         wafutils.logAlert("not found uri")
         return
     end
@@ -119,17 +128,25 @@ function _M.UrlFilter()
     elseif rule.IsBlackUrl(uri) then
         wafutils.logAlert(uri .. " is black uri")
         ngx.exit(ngx.HTTP_FORBIDDEN)
+        if _M.BlockEvilIP then
+            wafactions.BlockIP()
+        end
     end
     return
 end
 
--- querystring / formdata
+-- querystring / formdata(post 未支持)
 function _M.ArgsFilter()
     wafutils.logDebug("start args filter")
     local args = ngx.req.get_uri_args()
-    if rule.QueryStringFilter(args) then
+    if not args then
+        return
+    elseif rule.QueryStringFilter(args) then
         wafutils.logAlert("request to " .. ngx.var.request_uri .. " in args filter rule")
         ngx.exit(ngx.HTTP_FORBIDDEN)
+        if _M.BlockEvilIP then
+            wafactions.BlockIP()
+        end
     end
     return
 end
@@ -143,7 +160,7 @@ end
 function _M.RefererFilter()
     wafutils.logDebug("start referer filter")
     local ref = ngx.var.http_referer or ""
-    if ref == "" then
+    if ref == "" or not ref then
         return
     end
 
@@ -152,6 +169,29 @@ function _M.RefererFilter()
     elseif rule.IsBlackReferer(ref) then
         wafutils.logAlert(ref .. " is black referer")
         ngx.exit(ngx.HTTP_FORBIDDEN)
+        if _M.BlockEvilIP then
+            wafactions.BlockIP()
+        end
+    end
+    return
+end
+
+-- cookie
+function _M.CookieFilter()
+    wafutils.logDebug("start cookie filter")
+    local ck = ngx.var.http_cookie or ""
+    if ck == "" or not ck then
+        return
+    end
+
+    if rule.IsWhiteCookie(ck) then
+        return
+    elseif rule.IsBlackCookie(ck) then
+        wafutils.logAlert(ck .. " is black cookie")
+        ngx.exit(ngx.HTTP_FORBIDDEN)
+        if _M.BlockEvilIP then
+            wafactions.BlockIP()
+        end
     end
     return
 end
@@ -160,7 +200,7 @@ end
 function _M.UserAgentFilter()
     wafutils.logDebug("start useragent filter")
     local ua = ngx.var.http_user_agent or ""
-    if ua == "" then
+    if ua == "" or not ua then
         wafutils.logAlert("not found ua")
         return
     end
@@ -170,6 +210,9 @@ function _M.UserAgentFilter()
     elseif rule.IsBlackUA(ua) then
         wafutils.logAlert(ua .. " is black ua")
         ngx.exit(ngx.HTTP_FORBIDDEN)
+        if _M.BlockEvilIP then
+            wafactions.BlockIP()
+        end
     end
     return
 end

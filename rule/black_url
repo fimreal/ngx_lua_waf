@@ -1,8 +1,8 @@
 # 指访问路径 /path
-\.(svn|git|htaccess|bash_history|DS_Store|config)
+\.(svn|git|htaccess|bash_history|DS_Store|config|env|idea|cgi)
 \.(bak|inc|old|mdb|sql|backup|java|class)$
-(vhost|bbs|host|wwwroot|www|site|root|hytop|flashfxp).*\.rar
 (phpmyadmin|jmx-console|jmxinvokerservlet)
 java\.lang
 /(attachments|upimg|images|css|uploadfiles|html|uploads|templets|static|template|data|inc|forumdata|upload|includes|cache|avatar)/(\w+).(php|jsp)
 README.md
+(?:define|eval|file_get_contents|include|require|require_once|shell_exec|phpinfo|system|passthru|preg_\w+|execute|echo|print|print_r|var_dump|(fp)open|alert|showmodaldialog)\(

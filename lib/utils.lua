@@ -27,7 +27,7 @@ end
 -- 写文件, 由于 lua 模块不会自己创建文件，使用 shell 命令解决
 function _M.write(filename, msg)
     os.execute("touch " .. filename)
-    local fd = io.open(filename, "ab")
+    local fd = io.open(filename, "a+b")
     if fd == nil then
         _M.logErr("Can not write into file[" .. filename .. "]")
         return

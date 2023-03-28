@@ -14,6 +14,7 @@ end
 -- 预加载到 table 中，减少环境污染
 function _M.LoadRule()
     WafRule = {}
+    WafRule.RuleDir = _M.WafRuleDir
     WafRule.IpWhiteList = wafutils.ReadFile(_M.WafRuleDir .. 'white_ip')
     WafRule.IpBlackList = wafutils.ReadFile(_M.WafRuleDir .. 'black_ip')
     WafRule.UrlWhiteRules = wafutils.ReadFile(_M.WafRuleDir .. 'white_url')
@@ -25,11 +26,18 @@ function _M.LoadRule()
     WafRule.RefWhiteRules = wafutils.ReadFile(_M.WafRuleDir .. 'white_referer')
     WafRule.RefBlackRules = wafutils.ReadFile(_M.WafRuleDir .. 'black_referer')
     WafRule.QueryStringRule = wafutils.ReadFile(_M.WafRuleDir .. 'querystring')
+    WafRule.CookieWhiteRule = wafutils.ReadFile(_M.WafRuleDir .. 'white_cookie')
+    WafRule.CookieBlackRule = wafutils.ReadFile(_M.WafRuleDir .. 'black_cookie')
+end
+
+function _M.LoadDynamicRule()
+    return
 end
 
 function _M.LoadRuleFromDir(rulePath)
     _M.SetWafRuleDir(rulePath)
     _M.LoadRule()
+    -- _M.LoadDynamicRule()
 end
 
 return _M
