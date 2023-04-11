@@ -1,6 +1,12 @@
 # scaner
 (WPScan|TPscan|HTTrack|antSword|harvest|audit|dirbuster|pangolin|nmap|sqln|hydra|Parser|libwww|BBBike|sqlmap|w3af|owasp|Nikto|fimap|havij|zmeu|BabyKrokodil|netsparker|httperf| SF/|zgrab|.nasl|absinthe|arachni/|autogetcontent|BFAC|brutus|bsqlbf)
 
+bxss.me
+
+# log4j
+# https://www.infiniroot.com/blog/1155/using-nginx-lua-script-mitigate-log4shell-cve-2021-44228-vulnerability
+jndi
+
 # spider
 # 爬虫建议使用 robots.txt 文件过滤
 # (Baiduspider|Googlebot|360Spider|SogouSpider|YisouSpider|bingbot|YoudaoBot|YandexBot|Bytespider|AspiegelBot|AhrefsBot)
