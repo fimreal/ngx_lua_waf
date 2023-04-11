@@ -43,22 +43,22 @@ function _M.GetClientIP()
 end
 
 -- format ip to decimal
-function _M.IP2Dec(ip)
-    local n = 4
-    local decimalNum = 0
-    local pos = 0
-    for s, e in function()
-        return string.find(ip, '.', pos, true)
-    end do
-        n = n - 1
-        decimalNum = decimalNum + string.sub(ip, pos, s - 1) * (256 ^ n)
-        pos = e + 1
-        if n == 1 then
-            decimalNum = decimalNum + string.sub(ip, pos, string.len(ip))
-        end
-    end
-    return decimalNum
-end
+-- function _M.IP2Dec(ip)
+--     local n = 4
+--     local decimalNum = 0
+--     local pos = 0
+--     for s, e in function()
+--         return string.find(ip, '.', pos, true)
+--     end do
+--         n = n - 1
+--         decimalNum = decimalNum + string.sub(ip, pos, s - 1) * (256 ^ n)
+--         pos = e + 1
+--         if n == 1 then
+--             decimalNum = decimalNum + string.sub(ip, pos, string.len(ip))
+--         end
+--     end
+--     return decimalNum
+-- end
 
 -- https://github.com/infiniroot/nginx-mitigate-log4shell/blob/main/mitigate-log4shell.conf
 -- function _M.Decipher(v)
