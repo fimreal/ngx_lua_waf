@@ -33,7 +33,9 @@ function _M.IsWhiteIP(clientIP)
         if err ~= nil then
             wafutils.logErr(err)
         end
-        wafutils.logWarn(clientIP .. " is white ip")
+        if ok then
+            wafutils.logWarn(clientIP .. " is white ip")
+        end
         return ok
         -- local clientIPDec = tonumber(wafutils.IP2Dec(clientIP))
 
@@ -72,7 +74,9 @@ function _M.IsBlackIP(clientIP)
         if err ~= nil then
             wafutils.logErr(err)
         end
-        wafutils.logWarn(clientIP .. " is black ip")
+        if ok then
+            wafutils.logWarn(clientIP .. " is black ip")
+        end
         return ok
         -- local clientIPDec = tonumber(wafutils.IP2Dec(clientIP))
 
