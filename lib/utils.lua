@@ -60,6 +60,25 @@ function _M.IP2Dec(ip)
     return decimalNum
 end
 
+-- https://github.com/infiniroot/nginx-mitigate-log4shell/blob/main/mitigate-log4shell.conf
+-- function _M.Decipher(v)
+--     local s = tostring(v)
+--     s = ngx.unescape_uri(s)
+--     if string.find(s, "${base64:") then
+--         t = (string.gsub(s, "${${base64:([%d%a%=]+)}}", "%1"))
+--         s = string.gsub(s, "${base64:([%d%a%=]+)}", tostring(ngx.decode_base64(t)))
+--     end
+--     s = string.gsub(s, "${lower:(%a+)}", "%1")
+--     s = string.gsub(s, "${upper:(%a+)}", "%1")
+--     s = string.gsub(s, "${env:[%a_-]+:%-([%a:])}", "%1")
+--     s = string.gsub(s, "${::%-(%a+)}", "%1")
+--     if string.lower(s) == string.lower(tostring(v)) then
+--         return string.lower(s)
+--     else
+--         return decipher(s)
+--     end
+-- end
+
 function _M.logDebug(msg)
     ngx.log(ngx.DEBUG, msg)
 end

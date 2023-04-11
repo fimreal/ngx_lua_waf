@@ -95,6 +95,25 @@ server {
 }
 ```
 
+#### 2.3 封锁恶意 ip
+
+例子: 在 server 中默认开启 waf 所有过滤规则, 同时对匹配到的 ip 封锁 600s
+
+```nginx
+http {
+    # context: http, server, location, location if
+    # enable all filter
+    access_by_lua_block {
+        local waf = require "waf"
+        waf.EnableBlockIP(600)
+        waf.ON()
+    }
+}
+```
+
+如果需要永久封禁，可以将时间改为 0，封禁 ip 记录重启后会丢失。持久化配置请加在 `rule/black_ip`
+
+
 ## z. 主要改动
 
 z.1 移除原来旧的安装脚本。
@@ -107,7 +126,7 @@ z.2 参考宝塔修改的过滤规则更新
 
     宝塔用户量有保障，规则应该普适于绝大部分场景，企业用户自定义规则更好
 
-    待添加
+    考虑到部分规则可能误伤，只选取了部分加入默认配置
 
 z.3 新功能支持
 

@@ -22,6 +22,5 @@ into(\s+)+(?:dump|out)file\s*
 (bin\(|ascii\(|benchmark\(|concat_ws\(|group_concat\(|strcmp\(|left\(|datadir\(|greatest\()
 (?:from.+?information_schema.+?)
 (array_map\(\"ass)
-'$
 \s+(or|xor|and)\s+.*(=|<|>|'|\")
 (Acunetix-Aspect|Acunetix-Aspect-Password|Acunetix-Aspect-Queries|X-WIPP|X-RequestManager-Memo|X-Request-Memo|X-Scan-Memo)
