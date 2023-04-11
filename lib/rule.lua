@@ -1,5 +1,6 @@
 local wafutils = require "lib.utils"
 local reMatch = ngx.re.match
+local ipmatcher = require "lib.ipmatcher"
 
 -- local ReqContentLength = tonumber(ngx.req.httpcontent_length)
 -- local ReqMethod = ngx.req.get_method()
@@ -22,25 +23,37 @@ end
 function _M.IsWhiteIP(clientIP)
     -- local WafRule.IpWhiteList = wafutils.ReadFile(_M.WafRuleDir .. 'white_ip')
     if wafutils.IsNotEmpty(WafRule.IpWhiteList) then
-        local clientIPDec = tonumber(wafutils.IP2Dec(clientIP))
-
-        for _, whiteIP in pairs(WafRule.IpWhiteList) do
-            local s, e = string.find(whiteIP, '-', 0, true)
-            -- 匹配单 ip 
-            if s == nil and clientIP == whiteIP then
-                wafutils.logWarn(clientIP .. " is white ip, catch rule: " .. whiteIP)
-                return true
-            elseif s ~= nil then
-                -- FIXME: 缺少 ip 可靠性判断
-                local ipFrom = tonumber(wafutils.IP2Dec(string.sub(whiteIP, 0, s - 1)))
-                local ipTo = tonumber(wafutils.IP2Dec(string.sub(whiteIP, e + 1)))
-                if clientIPDec < ipFrom or clientIPDec > ipTo then
-                    return false
-                end
-                wafutils.logWarn(clientIP .. " is white ip, catch rule: " .. whiteIP)
-                return true
-            end
+        local whiteip, err = ipmatcher.new(WafRule.IpWhiteList)
+        if err ~= nil and whiteip == nil then
+            wafutils.logErr(err)
+            return false
         end
+
+        local ok, err = whiteip:match(clientIP)
+        if err ~= nil then
+            wafutils.logErr(err)
+        end
+        wafutils.logWarn(clientIP .. " is white ip")
+        return ok
+        -- local clientIPDec = tonumber(wafutils.IP2Dec(clientIP))
+
+        -- for _, whiteIP in pairs(WafRule.IpWhiteList) do
+        --     local s, e = string.find(whiteIP, '-', 0, true)
+        --     -- 匹配单 ip 
+        --     if s == nil and clientIP == whiteIP then
+        --         wafutils.logWarn(clientIP .. " is white ip, catch rule: " .. whiteIP)
+        --         return true
+        --     elseif s ~= nil then
+        --         -- FIXME: 缺少 ip 可靠性判断
+        --         local ipFrom = tonumber(wafutils.IP2Dec(string.sub(whiteIP, 0, s - 1)))
+        --         local ipTo = tonumber(wafutils.IP2Dec(string.sub(whiteIP, e + 1)))
+        --         if clientIPDec < ipFrom or clientIPDec > ipTo then
+        --             return false
+        --         end
+        --         wafutils.logWarn(clientIP .. " is white ip, catch rule: " .. whiteIP)
+        --         return true
+        --     end
+        -- end
     end
     return false
 end
@@ -49,25 +62,37 @@ end
 function _M.IsBlackIP(clientIP)
     -- local WafRule.IpBlackList = wafutils.ReadFile(_M.WafRuleDir .. 'black_ip')
     if wafutils.IsNotEmpty(WafRule.IpBlackList) then
-        local clientIPDec = tonumber(wafutils.IP2Dec(clientIP))
-
-        for _, blackIP in pairs(WafRule.IpBlackList) do
-            local s, e = string.find(blackIP, '-', 0, true)
-            -- 匹配单 ip 
-            if s == nil and clientIP == blackIP then
-                wafutils.logWarn(clientIP .. " is black ip, catch rule: " .. blackIP)
-                return true
-            elseif s ~= nil then
-                -- FIXME: 缺少 ip 可靠性判断
-                local ipFrom = tonumber(wafutils.IP2Dec(string.sub(blackIP, 0, s - 1)))
-                local ipTo = tonumber(wafutils.IP2Dec(string.sub(blackIP, e + 1)))
-                if clientIPDec < ipFrom or clientIPDec > ipTo then
-                    return false
-                end
-                wafutils.logWarn(clientIP .. " is black ip, catch rule: " .. blackIP)
-                return true
-            end
+        local blackip, err = ipmatcher.new(WafRule.IpWhiteList)
+        if err ~= nil and blackip == nil then
+            wafutils.logErr(err)
+            return false
         end
+
+        local ok, err = blackip:match(clientIP)
+        if err ~= nil then
+            wafutils.logErr(err)
+        end
+        wafutils.logWarn(clientIP .. " is black ip")
+        return ok
+        -- local clientIPDec = tonumber(wafutils.IP2Dec(clientIP))
+
+        -- for _, blackIP in pairs(WafRule.IpBlackList) do
+        --     local s, e = string.find(blackIP, '-', 0, true)
+        --     -- 匹配单 ip 
+        --     if s == nil and clientIP == blackIP then
+        --         wafutils.logWarn(clientIP .. " is black ip, catch rule: " .. blackIP)
+        --         return true
+        --     elseif s ~= nil then
+        --         -- FIXME: 缺少 ip 可靠性判断
+        --         local ipFrom = tonumber(wafutils.IP2Dec(string.sub(blackIP, 0, s - 1)))
+        --         local ipTo = tonumber(wafutils.IP2Dec(string.sub(blackIP, e + 1)))
+        --         if clientIPDec < ipFrom or clientIPDec > ipTo then
+        --             return false
+        --         end
+        --         wafutils.logWarn(clientIP .. " is black ip, catch rule: " .. blackIP)
+        --         return true
+        --     end
+        -- end
     end
     return false
 end
@@ -133,8 +158,8 @@ function _M.QueryStringFilter(args)
                     data = val
                 end
 
-                if reMatch(ngx.unescape_uri(data),rule,'isjo') then
-                    wafutils.logWarn("find ".. data .. " in rule: " .. rule)
+                if reMatch(ngx.unescape_uri(data), rule, 'isjo') then
+                    wafutils.logWarn("find " .. data .. " in rule: " .. rule)
                     return true
                 end
             end
